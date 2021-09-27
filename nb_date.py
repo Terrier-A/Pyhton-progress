@@ -14,18 +14,16 @@ calendar = {
     "december": [12, 31, "décembre"],
 }
 
-
 game = True
 french = False
-find = False
-a_month = ""
+the_input = ""
 year = -1
 days = 0
 
 separator_fr = f"+{'-' * 45}+"
 header_fr = f"| Bienvenue sur l'application nombre de jours |"
 separator_en = f"+{'-' * 38}+"
-header_en = f"| Welcome on days on month application |"
+header_en = f"| Welcome to days on month application |"
 leave = "For leave write 'exit'"
 leave_fr = "Pour quitter tapez 'exit'"
 label_input_year = "Please enter a year : "
@@ -34,6 +32,8 @@ label_input_month = "Please enter a month : "
 label_input_month_fr = "Veuillez taper un mois : "
 translate = "Pour le français tapez 'fr'"
 translate_fr = "For english write 'en'"
+prompt_menu_en = "You want to use it ? You can by write yes or use commands bellow : "
+prompt_menu_fr = "Vous voulez l'utiliser ?  Tapez oui ou utilisez les commandes ci-dessus : "
 
 
 # noinspection DuplicatedCode
@@ -44,35 +44,57 @@ def isb(a_year=0):
         return False
 
 
-def to_int(something=""):
-    try:
-        number = int(something)
-    except ValueError:
-        print("%s n'est pas un nombre (en chiffre hein !) !!!" % something)
-        return -1
-    else:
-        return number
+def ask_ok(prompt, retries=4, reminder='exit'):
+    while retries > 0:
+        ok = input(prompt)
+        if ok in ('y', 'ye', 'yes', 'oui'):
+            return "continue"
+        elif ok in ('n', 'no', 'nop', 'nope', 'exit', 'leave', 'quit'):
+            return reminder
+        elif ok in ('fr', 'fra', 'french'):
+            return "fr"
+        retries = retries - 1
+        if retries < 0:
+            return reminder
 
 
-def in_calendar(month_founding="", afrench=french, is_find=find, thedays=days):
+def to_int(prompt, retry=3):
+    number = 0
+    while retry > 0:
+        try:
+            number = int(input(prompt))
+        except ValueError:
+            print("%s n'est pas un nombre (en chiffre hein !) !!!" % number)
+        else:
+            return number
+        finally:
+            retry -= 1
+            if retry < 1:
+                return
+
+
+def in_calendar(month_founding="", year_is_bis=0):
+    the_days = 0
+    is_find = False
     for good in calendar:
         if month_founding.lower() == good:
-            afrench = False
             is_find = True
-            if (good == "february") & isb(year):
-                thedays = calendar[good][2] + 1
+            if (good == "february") & isb(year_is_bis):
+                the_days = calendar[good][1] + 1
             else:
-                thedays = calendar[good][2]
+                the_days = calendar[good][1]
             break
-        elif month_founding.lower() == calendar[good][3]:
-            afrench = True
+        elif month_founding.lower() == calendar[good][2]:
             is_find = True
-            if (calendar[good][3] == "février") & isb(year):
-                thedays = calendar[good][2] + 1
+            if (calendar[good][2] == "février") & isb(year_is_bis):
+                the_days = calendar[good][1] + 1
             else:
-                thedays = calendar[good][2]
+                the_days = calendar[good][1]
             break
-    return afrench, is_find, thedays
+    if is_find:
+        return the_days
+    else:
+        return -1
 
 
 # programme
@@ -83,23 +105,41 @@ while game:
         leave_print = leave_fr
         translate_print = translate_fr
         lab_imp_y = label_input_year_fr
+        lab_imp_m = label_input_month_fr
+        prompt_menu = prompt_menu_fr
     else:
         sep_to_print = separator_en
         head_to_print = header_en
         leave_print = leave
         translate_print = translate
         lab_imp_y = label_input_year
+        lab_imp_m = label_input_month
+        prompt_menu = prompt_menu_en
     print(sep_to_print)
     print(head_to_print)
     print(sep_to_print)
     print("")
     print(leave_print)
     print(translate_print)
+    print("")
 
-    a_month = input(lab_imp_y)
-    if a_month == "exit":
+    the_input = ask_ok(prompt_menu)
+
+    if the_input == "exit":
         game = False
-    elif a_month == "en":
+    elif the_input == "en":
         french = False
-    elif a_month == "fr":
+    elif the_input == "fr":
         french = True
+    elif the_input == "continue":
+        year = to_int(lab_imp_y)
+    if year == -1:
+        continue
+    else:
+        the_input = input(lab_imp_m)
+        days = in_calendar(the_input, year)
+        if days > 0:
+            print("%s %s" % (days, the_input))
+        else:
+            print("%s" % the_input)
+    year = 0

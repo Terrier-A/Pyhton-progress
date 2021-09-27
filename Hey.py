@@ -1,7 +1,12 @@
-first = input("Entier : ")
-second = input("Entier (encore) : ")
+from random import randint
 
-first = int(first)
-second = int(second)
+data = []
 
-print("Ton nombre c'est ", first + second)
+for i in range(10):
+    data.append(randint(0, 99))
+
+print(data)
+
+data2 = [value % 2 for value in data if value >= 50]
+
+print(data2)
