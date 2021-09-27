@@ -37,11 +37,11 @@ year = -1
 days = 0
 
 
-# def isb(a_year=0):
-#     if a_year % 4 == 0 and a_year % 100 != 0 or a_year % 400 == 0:
-#         return True
-#     else:
-#         return False
+def isb(a_year=0):
+    if a_year % 4 == 0 and a_year % 100 != 0 or a_year % 400 == 0:
+        return True
+    else:
+        return False
 
 
 def to_int(a_year=""):

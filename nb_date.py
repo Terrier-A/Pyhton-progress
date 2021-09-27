@@ -36,6 +36,7 @@ translate = "Pour le français tapez 'fr'"
 translate_fr = "For english write 'en'"
 
 
+# noinspection DuplicatedCode
 def isb(a_year=0):
     if a_year % 4 == 0 and a_year % 100 != 0 or a_year % 400 == 0:
         return True
@@ -43,27 +44,35 @@ def isb(a_year=0):
         return False
 
 
-def to_int(a_year=""):
+def to_int(something=""):
     try:
-        good_year = int(a_year)
+        number = int(something)
     except ValueError:
-        print("%s n'est pas un nombre (en chiffre hein !) !!!" % a_year)
+        print("%s n'est pas un nombre (en chiffre hein !) !!!" % something)
         return -1
     else:
-        return good_year
+        return number
 
 
-def in_calendar(a_month=""):
+def in_calendar(month_founding="", afrench=french, is_find=find, thedays=days):
     for good in calendar:
-        if a_month.lower() == good:
-            french = False
-            find = True
+        if month_founding.lower() == good:
+            afrench = False
+            is_find = True
             if (good == "february") & isb(year):
-                days = calendar[good] + 1
+                thedays = calendar[good][2] + 1
             else:
-                days = calendar[good]
+                thedays = calendar[good][2]
             break
-    return False
+        elif month_founding.lower() == calendar[good][3]:
+            afrench = True
+            is_find = True
+            if (calendar[good][3] == "février") & isb(year):
+                thedays = calendar[good][2] + 1
+            else:
+                thedays = calendar[good][2]
+            break
+    return afrench, is_find, thedays
 
 
 # programme
@@ -94,4 +103,3 @@ while game:
         french = False
     elif a_month == "fr":
         french = True
-
